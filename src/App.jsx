@@ -1,0 +1,1679 @@
+
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  ArrowRight,
+  BrainCircuit,
+  BriefcaseBusiness,
+  GraduationCap,
+  Users,
+  Menu,
+  Sparkles,
+  CheckCircle2,
+  MessageSquare,
+  ChevronRight,
+  X,
+  Code2,
+  Laptop,
+  Target,
+  Search,
+  MapPin,
+  Clock,
+  Building2,
+  Plus,
+  Send,
+  Filter,
+  Star,
+  ShieldCheck,
+  Quote,
+  Mail,
+  LockKeyhole,
+  Eye,
+  EyeOff,
+  UserRound,
+  BookOpen,
+  Award
+} from "lucide-react";
+
+/* ==================================================
+   WEBSITE DATA
+================================================== */
+
+const programs = [
+  {
+    icon: BrainCircuit,
+    title: "Artificial Intelligence",
+    description:
+      "Explore AI fundamentals and understand how intelligent systems are transforming industries."
+  },
+  {
+    icon: Laptop,
+    title: "Generative AI",
+    description:
+      "Discover LLMs, AI tools, prompt engineering and practical generative AI applications."
+  },
+  {
+    icon: Code2,
+    title: "Machine Learning",
+    description:
+      "Learn algorithms, data-driven models and the technology behind intelligent predictions."
+  }
+];
+
+const navItems = [
+  ["Home", "#home"],
+  ["Programs", "#programs"],
+  ["Jobs & Careers", "#jobs"],
+  ["About Us", "#about"],
+  ["Feedback", "#feedback"]
+];
+
+const emptyJobForm = {
+  title: "",
+  company: "",
+  location: "",
+  type: "Full-time",
+  experience: "",
+  description: "",
+  applyUrl: ""
+};
+
+/* ==================================================
+   JOB BOARD
+================================================== */
+
+function JobBoard() {
+  const [jobs, setJobs] = useState([]);
+  const [search, setSearch] = useState("");
+  const [location, setLocation] = useState("");
+  const [type, setType] = useState("All types");
+  const [postOpen, setPostOpen] = useState(false);
+  const [form, setForm] = useState(emptyJobForm);
+
+  const filteredJobs = jobs.filter((job) => {
+    const matchesSearch =
+      `${job.title} ${job.company} ${job.description}`
+        .toLowerCase()
+        .includes(search.toLowerCase());
+
+    const matchesLocation = job.location
+      .toLowerCase()
+      .includes(location.toLowerCase());
+
+    const matchesType = type === "All types" || job.type === type;
+
+    return matchesSearch && matchesLocation && matchesType;
+  });
+
+  function handlePost(e) {
+    e.preventDefault();
+
+    setJobs((previous) => [
+      { ...form, id: Date.now() },
+      ...previous
+    ]);
+
+    setForm(emptyJobForm);
+    setPostOpen(false);
+  }
+
+  return (
+    <section id="jobs" className="bg-white px-6 py-24">
+      <div className="mx-auto max-w-7xl">
+
+        <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
+          <div>
+            <span className="text-xs font-bold tracking-[3px] text-[#B28A36]">
+              YOUR NEXT OPPORTUNITY
+            </span>
+
+            <h2 className="mt-4 text-4xl font-extrabold text-[#102B50] md:text-5xl">
+              Discover. Apply. Grow.
+            </h2>
+
+            <p className="mt-4 max-w-xl leading-7 text-slate-500">
+              Explore career opportunities, internships and professional
+              openings across industries.
+            </p>
+          </div>
+
+          <button
+            onClick={() => setPostOpen(true)}
+            className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#102B50] px-6 py-4 font-semibold text-white transition hover:bg-[#1C416E]"
+          >
+            <Plus size={19} />
+            Post a Job
+          </button>
+        </div>
+
+        {/* SEARCH */}
+        <div className="mt-12 rounded-2xl border border-slate-200 bg-[#F4F7FC] p-5 md:p-7">
+          <div className="mb-5 flex items-center gap-2 font-bold text-[#102B50]">
+            <Filter size={19} className="text-[#B28A36]" />
+            Find Your Opportunity
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-3">
+            <div className="relative">
+              <Search
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+                size={19}
+              />
+              <input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Job title or company"
+                className="w-full rounded-xl border border-slate-200 bg-white py-4 pl-12 pr-4 text-sm outline-none focus:border-[#B28A36]"
+              />
+            </div>
+
+            <div className="relative">
+              <MapPin
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+                size={19}
+              />
+              <input
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
+                placeholder="City or location"
+                className="w-full rounded-xl border border-slate-200 bg-white py-4 pl-12 pr-4 text-sm outline-none focus:border-[#B28A36]"
+              />
+            </div>
+
+            <select
+              value={type}
+              onChange={(e) => setType(e.target.value)}
+              className="rounded-xl border border-slate-200 bg-white px-4 py-4 text-sm outline-none focus:border-[#B28A36]"
+            >
+              <option>All types</option>
+              <option>Full-time</option>
+              <option>Part-time</option>
+              <option>Internship</option>
+              <option>Contract</option>
+            </select>
+          </div>
+
+          <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+            <span className="text-xs text-slate-500">
+              Search available listings using the filters above.
+            </span>
+
+            <button
+              onClick={() => {
+                setSearch("");
+                setLocation("");
+                setType("All types");
+              }}
+              className="text-sm font-semibold text-[#B28A36] hover:underline"
+            >
+              Clear filters
+            </button>
+          </div>
+        </div>
+
+        {/* LISTINGS */}
+        <div className="mt-10 flex items-center justify-between">
+          <h3 className="text-xl font-bold text-[#102B50]">
+            Available Opportunities
+          </h3>
+
+          <span className="text-sm text-slate-500">
+            {filteredJobs.length} listing(s)
+          </span>
+        </div>
+
+        {filteredJobs.length === 0 ? (
+          <div className="mt-6 rounded-2xl border border-dashed border-slate-300 bg-[#F8FAFD] px-6 py-16 text-center">
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[#102B50] text-[#D7B45A]">
+              <BriefcaseBusiness size={29} />
+            </div>
+
+            <h3 className="mt-6 text-xl font-bold text-[#102B50]">
+              {jobs.length === 0
+                ? "No active job listings yet"
+                : "No matching opportunities found"}
+            </h3>
+
+            <p className="mx-auto mt-3 max-w-lg text-sm leading-7 text-slate-500">
+              {jobs.length === 0
+                ? "New opportunities will appear here when genuine job listings are added."
+                : "Try changing your search terms or clearing your filters."}
+            </p>
+
+            {jobs.length === 0 && (
+              <button
+                onClick={() => setPostOpen(true)}
+                className="mt-7 inline-flex items-center gap-2 rounded-lg bg-[#102B50] px-6 py-3 font-semibold text-white hover:bg-[#1C416E]"
+              >
+                Post the First Opportunity
+                <ArrowRight size={17} />
+              </button>
+            )}
+          </div>
+        ) : (
+          <div className="mt-6 grid gap-5 md:grid-cols-2">
+            {filteredJobs.map((job) => (
+              <motion.div
+                key={job.id}
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="rounded-2xl border border-slate-200 bg-white p-7 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+              >
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#102B50] text-[#D7B45A]">
+                      <Building2 size={23} />
+                    </div>
+
+                    <div>
+                      <h4 className="font-bold text-[#102B50]">
+                        {job.title}
+                      </h4>
+                      <p className="mt-1 text-sm text-slate-500">
+                        {job.company}
+                      </p>
+                    </div>
+                  </div>
+
+                  <span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-800">
+                    Preview only
+                  </span>
+                </div>
+
+                <div className="mt-6 flex flex-wrap gap-4 text-xs text-slate-500">
+                  <span className="flex items-center gap-1.5">
+                    <MapPin size={15} /> {job.location}
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <BriefcaseBusiness size={15} /> {job.type}
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <Clock size={15} /> {job.experience}
+                  </span>
+                </div>
+
+                <p className="mt-5 text-sm leading-7 text-slate-600">
+                  {job.description}
+                </p>
+
+                <div className="mt-6 border-t border-slate-100 pt-5">
+                  <span className="text-xs font-medium text-amber-700">
+                    Local browser preview — not publicly published
+                  </span>
+
+                  {job.applyUrl && (
+                    <a
+                      href={job.applyUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="mt-3 flex items-center gap-2 font-bold text-[#102B50] hover:text-[#B28A36]"
+                    >
+                      Open application link <ArrowRight size={17} />
+                    </a>
+                  )}
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* JOB FORM */}
+      <AnimatePresence>
+        {postOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto bg-[#09182D]/75 p-4 backdrop-blur-sm"
+            onClick={() => setPostOpen(false)}
+          >
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              onClick={(e) => e.stopPropagation()}
+              className="my-auto w-full max-w-2xl rounded-2xl bg-white p-6 shadow-2xl md:p-9"
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <span className="text-xs font-bold tracking-[2px] text-[#B28A36]">
+                    EMPLOYER CORNER
+                  </span>
+                  <h3 className="mt-2 text-2xl font-extrabold text-[#102B50]">
+                    Post an Opportunity
+                  </h3>
+                </div>
+
+                <button
+                  onClick={() => setPostOpen(false)}
+                  className="rounded-lg p-2 text-slate-500 hover:bg-slate-100"
+                  aria-label="Close job form"
+                >
+                  <X size={22} />
+                </button>
+              </div>
+
+              <p className="mt-3 text-sm leading-6 text-slate-500">
+                Add genuine opportunity details. This frontend preview
+                does not publish vacancies to the public internet.
+              </p>
+
+              <form onSubmit={handlePost} className="mt-7 space-y-5">
+                <div className="grid gap-5 sm:grid-cols-2">
+                  <div>
+                    <label className="mb-2 block text-sm font-semibold text-[#102B50]">
+                      Job title *
+                    </label>
+                    <input
+                      required
+                      value={form.title}
+                      onChange={(e) => setForm({ ...form, title: e.target.value })}
+                      placeholder="e.g. AI Engineer"
+                      className="w-full rounded-lg border border-slate-200 px-4 py-3 text-sm outline-none focus:border-[#B28A36]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="mb-2 block text-sm font-semibold text-[#102B50]">
+                      Company name *
+                    </label>
+                    <input
+                      required
+                      value={form.company}
+                      onChange={(e) => setForm({ ...form, company: e.target.value })}
+                      placeholder="Company name"
+                      className="w-full rounded-lg border border-slate-200 px-4 py-3 text-sm outline-none focus:border-[#B28A36]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="mb-2 block text-sm font-semibold text-[#102B50]">
+                      Location *
+                    </label>
+                    <input
+                      required
+                      value={form.location}
+                      onChange={(e) => setForm({ ...form, location: e.target.value })}
+                      placeholder="e.g. Dehradun / Remote"
+                      className="w-full rounded-lg border border-slate-200 px-4 py-3 text-sm outline-none focus:border-[#B28A36]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="mb-2 block text-sm font-semibold text-[#102B50]">
+                      Employment type *
+                    </label>
+                    <select
+                      value={form.type}
+                      onChange={(e) => setForm({ ...form, type: e.target.value })}
+                      className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-[#B28A36]"
+                    >
+                      <option>Full-time</option>
+                      <option>Part-time</option>
+                      <option>Internship</option>
+                      <option>Contract</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="mb-2 block text-sm font-semibold text-[#102B50]">
+                    Experience required *
+                  </label>
+                  <input
+                    required
+                    value={form.experience}
+                    onChange={(e) => setForm({ ...form, experience: e.target.value })}
+                    placeholder="e.g. Fresher / 2 years"
+                    className="w-full rounded-lg border border-slate-200 px-4 py-3 text-sm outline-none focus:border-[#B28A36]"
+                  />
+                </div>
+
+                <div>
+                  <label className="mb-2 block text-sm font-semibold text-[#102B50]">
+                    Job description *
+                  </label>
+                  <textarea
+                    required
+                    rows={4}
+                    value={form.description}
+                    onChange={(e) => setForm({ ...form, description: e.target.value })}
+                    placeholder="Describe the role and responsibilities..."
+                    className="w-full resize-y rounded-lg border border-slate-200 px-4 py-3 text-sm outline-none focus:border-[#B28A36]"
+                  />
+                </div>
+
+                <div>
+                  <label className="mb-2 block text-sm font-semibold text-[#102B50]">
+                    Application URL
+                  </label>
+                  <input
+                    type="url"
+                    value={form.applyUrl}
+                    onChange={(e) => setForm({ ...form, applyUrl: e.target.value })}
+                    placeholder="https://company.com/careers"
+                    className="w-full rounded-lg border border-slate-200 px-4 py-3 text-sm outline-none focus:border-[#B28A36]"
+                  />
+                </div>
+
+                <div className="rounded-xl bg-amber-50 p-4 text-xs leading-6 text-amber-900">
+                  Preview mode: this listing exists only in the current
+                  browser session. Authentication, moderation and database
+                  publishing will be implemented later.
+                </div>
+
+                <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+                  <button
+                    type="button"
+                    onClick={() => setPostOpen(false)}
+                    className="rounded-lg border border-slate-200 px-6 py-3 font-semibold text-slate-600 hover:bg-slate-50"
+                  >
+                    Cancel
+                  </button>
+
+                  <button
+                    type="submit"
+                    className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#102B50] px-6 py-3 font-semibold text-white hover:bg-[#1C416E]"
+                  >
+                    <Send size={17} /> Add Preview Listing
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </section>
+  );
+}
+
+/* ==================================================
+   STUDENT FEEDBACK SYSTEM
+================================================== */
+
+function FeedbackSection() {
+  const [reviews, setReviews] = useState([]);
+
+  const [form, setForm] = useState({
+    name: "",
+    course: "",
+    rating: 5,
+    message: "",
+    consent: false
+  });
+
+  function handleFeedbackSubmit(e) {
+    e.preventDefault();
+
+    const review = {
+      id: Date.now(),
+      name: form.name.trim(),
+      course: form.course,
+      rating: form.rating,
+      message: form.message.trim(),
+      date: new Date().toLocaleDateString("en-IN")
+    };
+
+    setReviews((previous) => [review, ...previous]);
+
+    setForm({
+      name: "",
+      course: "",
+      rating: 5,
+      message: "",
+      consent: false
+    });
+  }
+
+  return (
+    <section id="feedback" className="bg-[#F4F7FC] px-6 py-24">
+      <div className="mx-auto max-w-7xl">
+
+        <div className="mx-auto max-w-3xl text-center">
+          <MessageSquare
+            className="mx-auto mb-5 text-[#B28A36]"
+            size={36}
+          />
+
+          <span className="text-xs font-bold tracking-[3px] text-[#B28A36]">
+            YOUR VOICE MATTERS
+          </span>
+
+          <h2 className="mt-4 text-3xl font-extrabold text-[#102B50] md:text-5xl">
+            Real Experiences. Honest Feedback.
+          </h2>
+
+          <p className="mx-auto mt-5 max-w-2xl leading-7 text-slate-500">
+            Your experience helps us improve. Share your thoughts about
+            your learning journey at Vyom Academy.
+          </p>
+        </div>
+
+        <div className="mt-14 grid items-start gap-8 lg:grid-cols-2">
+
+          {/* FEEDBACK FORM */}
+          <div className="rounded-2xl border border-slate-200 bg-white p-7 shadow-sm md:p-9">
+            <div className="flex items-center gap-3">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#102B50] text-[#D7B45A]">
+                <MessageSquare size={23} />
+              </div>
+
+              <div>
+                <h3 className="text-xl font-bold text-[#102B50]">
+                  Share Your Feedback
+                </h3>
+                <p className="mt-1 text-xs text-slate-500">
+                  Tell us about your learning experience
+                </p>
+              </div>
+            </div>
+
+            <form onSubmit={handleFeedbackSubmit} className="mt-8 space-y-6">
+              <div>
+                <label className="mb-2 block text-sm font-semibold text-[#102B50]">
+                  Your Name *
+                </label>
+                <input
+                  required
+                  maxLength={80}
+                  value={form.name}
+                  onChange={(e) => setForm({ ...form, name: e.target.value })}
+                  placeholder="Enter your name"
+                  className="w-full rounded-lg border border-slate-200 px-4 py-3.5 text-sm outline-none focus:border-[#B28A36]"
+                />
+              </div>
+
+              <div>
+                <label className="mb-2 block text-sm font-semibold text-[#102B50]">
+                  Course / Program *
+                </label>
+                <select
+                  required
+                  value={form.course}
+                  onChange={(e) => setForm({ ...form, course: e.target.value })}
+                  className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3.5 text-sm outline-none focus:border-[#B28A36]"
+                >
+                  <option value="">Select your program</option>
+                  <option>Artificial Intelligence</option>
+                  <option>Generative AI</option>
+                  <option>Machine Learning</option>
+                  <option>Data Science</option>
+                  <option>Python Programming</option>
+                  <option>Other</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="mb-3 block text-sm font-semibold text-[#102B50]">
+                  Rate Your Experience *
+                </label>
+
+                <div className="flex items-center gap-2">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={star}
+                      type="button"
+                      aria-label={`Rate ${star} out of 5`}
+                      aria-pressed={form.rating === star}
+                      onClick={() => setForm({ ...form, rating: star })}
+                      className="rounded-md p-1 transition hover:scale-110"
+                    >
+                      <Star
+                        size={31}
+                        fill={star <= form.rating ? "#D7B45A" : "transparent"}
+                        color={star <= form.rating ? "#B28A36" : "#CBD5E1"}
+                      />
+                    </button>
+                  ))}
+
+                  <span className="ml-2 text-sm font-semibold text-[#102B50]">
+                    {form.rating}/5
+                  </span>
+                </div>
+              </div>
+
+              <div>
+                <label className="mb-2 block text-sm font-semibold text-[#102B50]">
+                  Your Feedback *
+                </label>
+
+                <textarea
+                  required
+                  minLength={10}
+                  maxLength={1000}
+                  rows={5}
+                  value={form.message}
+                  onChange={(e) => setForm({ ...form, message: e.target.value })}
+                  placeholder="Tell us what you liked and what we could improve..."
+                  className="w-full resize-y rounded-lg border border-slate-200 px-4 py-3.5 text-sm leading-6 outline-none focus:border-[#B28A36]"
+                />
+
+                <p className="mt-1 text-right text-xs text-slate-400">
+                  {form.message.length}/1000 characters
+                </p>
+              </div>
+
+              <label className="flex cursor-pointer items-start gap-3 rounded-xl bg-[#F4F7FC] p-4">
+                <input
+                  type="checkbox"
+                  required
+                  checked={form.consent}
+                  onChange={(e) => setForm({ ...form, consent: e.target.checked })}
+                  className="mt-1 h-4 w-4 accent-[#102B50]"
+                />
+
+                <span className="text-xs leading-6 text-slate-600">
+                  I agree that my submitted feedback may be displayed
+                  with my name and selected course after review.
+                </span>
+              </label>
+
+              <button
+                type="submit"
+                className="flex w-full items-center justify-center gap-3 rounded-lg bg-[#102B50] px-6 py-4 font-bold text-white shadow-lg transition hover:bg-[#1C416E]"
+              >
+                Submit Feedback
+                <ArrowRight size={18} />
+              </button>
+
+              <p className="text-center text-xs leading-5 text-slate-400">
+                Your feedback will be treated as a submission for review,
+                not automatically as a verified testimonial.
+              </p>
+            </form>
+          </div>
+
+          {/* FEEDBACK DISPLAY */}
+          <div>
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <h3 className="text-xl font-bold text-[#102B50]">
+                  Learner Feedback
+                </h3>
+                <p className="mt-1 text-sm text-slate-500">
+                  Experiences submitted by learners
+                </p>
+              </div>
+
+              <span className="rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-600">
+                {reviews.length} submission(s)
+              </span>
+            </div>
+
+            {reviews.length === 0 ? (
+              <div className="mt-6 rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-16 text-center">
+                <Quote
+                  size={38}
+                  className="mx-auto mb-5 text-[#B28A36]"
+                />
+
+                <h4 className="text-lg font-bold text-[#102B50]">
+                  Your feedback belongs here
+                </h4>
+
+                <p className="mx-auto mt-3 max-w-sm text-sm leading-7 text-slate-500">
+                  We don't display invented reviews. Learner submissions
+                  will appear here after they are provided and reviewed.
+                </p>
+              </div>
+            ) : (
+              <div className="mt-6 space-y-5">
+                <AnimatePresence>
+                  {reviews.map((review) => (
+                    <motion.article
+                      key={review.id}
+                      initial={{ opacity: 0, y: 15 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
+                    >
+                      <div className="flex flex-wrap items-start justify-between gap-3">
+                        <div>
+                          <h4 className="font-bold text-[#102B50]">
+                            {review.name}
+                          </h4>
+                          <p className="mt-1 text-xs text-slate-500">
+                            {review.course}
+                          </p>
+                        </div>
+
+                        <span className="rounded-full bg-amber-50 px-3 py-1.5 text-[10px] font-semibold text-amber-800">
+                          Pending moderation
+                        </span>
+                      </div>
+
+                      <div className="mt-4 flex items-center gap-1">
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <Star
+                            key={star}
+                            size={16}
+                            fill={star <= review.rating ? "#D7B45A" : "transparent"}
+                            color={star <= review.rating ? "#B28A36" : "#CBD5E1"}
+                          />
+                        ))}
+
+                        <span className="ml-2 text-xs text-slate-500">
+                          {review.date}
+                        </span>
+                      </div>
+
+                      <p className="mt-4 whitespace-pre-wrap text-sm leading-7 text-slate-600">
+                        {review.message}
+                      </p>
+
+                      <div className="mt-5 flex items-center gap-2 border-t border-slate-100 pt-4 text-xs text-amber-800">
+                        <ShieldCheck size={15} />
+                        Submitted locally · not independently verified
+                      </div>
+                    </motion.article>
+                  ))}
+                </AnimatePresence>
+              </div>
+            )}
+
+            <div className="mt-6 flex items-start gap-3 rounded-xl border border-[#E8D6A5] bg-[#FFF9E9] p-4">
+              <ShieldCheck
+                className="mt-0.5 shrink-0 text-[#B28A36]"
+                size={20}
+              />
+              <p className="text-xs leading-6 text-slate-600">
+                Submissions require review before they can be approved as
+                public testimonials. Ratings shown here are individual
+                submissions, not an overall academy rating.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ==================================================
+   STUDENT AND TRAINER AUTHENTICATION UI
+================================================== */
+
+function AuthModal({ role, onClose }) {
+  const [mode, setMode] = useState("signin");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [status, setStatus] = useState("");
+
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    interest: "",
+    terms: false
+  });
+
+  const isStudent = role === "Student";
+  const isRegister = mode === "register";
+
+  const roleDescription = isStudent
+    ? "Your learning journey starts here. Access courses, discover new skills and work towards your goals."
+    : "Share your expertise, connect with learners and contribute to the next generation of technology professionals.";
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    setStatus("");
+
+    if (isRegister && form.password !== form.confirmPassword) {
+      setStatus("Your passwords do not match. Please check and try again.");
+      return;
+    }
+
+    if (isRegister && !form.terms) {
+      setStatus("Please accept the terms to continue.");
+      return;
+    }
+
+    setStatus(
+      "This is a frontend demonstration. Real account creation and sign-in will be enabled after secure authentication is connected."
+    );
+  }
+
+  function changeMode(nextMode) {
+    setMode(nextMode);
+    setStatus("");
+    setShowPassword(false);
+    setShowConfirmPassword(false);
+  }
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-[150] flex items-center justify-center overflow-y-auto bg-[#07172B]/80 p-4 backdrop-blur-md"
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ opacity: 0, y: 25, scale: 0.97 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={{ opacity: 0, y: 20, scale: 0.97 }}
+        transition={{ duration: 0.25 }}
+        onClick={(e) => e.stopPropagation()}
+        className="relative my-auto w-full max-w-5xl overflow-hidden rounded-3xl bg-white shadow-2xl"
+      >
+        <button
+          onClick={onClose}
+          className="absolute right-4 top-4 z-20 rounded-full bg-white/90 p-2 text-slate-600 shadow-sm transition hover:bg-slate-100"
+          aria-label="Close portal"
+        >
+          <X size={21} />
+        </button>
+
+        <div className="grid md:grid-cols-[0.85fr_1.15fr]">
+
+          {/* LEFT BRAND PANEL */}
+          <div className="relative hidden min-h-[650px] flex-col justify-between overflow-hidden bg-[#102B50] p-10 text-white md:flex">
+            <div className="absolute -right-24 -top-20 h-72 w-72 rounded-full border border-white/10" />
+            <div className="absolute -bottom-28 -left-24 h-80 w-80 rounded-full border border-[#D7B45A]/20" />
+            <div className="absolute bottom-20 right-8 h-40 w-40 rounded-full bg-[#D7B45A]/10 blur-3xl" />
+
+            <div className="relative">
+              <img
+                src="/vyom-logo.png"
+                alt="Vyom Academy logo"
+                className="h-24 w-24 rounded-2xl bg-white p-2 object-contain"
+              />
+
+              <h2 className="mt-7 text-2xl font-extrabold tracking-wide">
+                VYOM ACADEMY
+              </h2>
+
+              <p className="mt-2 text-[10px] font-bold tracking-[3px] text-[#D7B45A]">
+                LEARN • INNOVATE • EXCEL
+              </p>
+            </div>
+
+            <div className="relative">
+              <span className="inline-flex items-center gap-2 rounded-full border border-[#D7B45A]/30 bg-[#D7B45A]/10 px-4 py-2 text-xs font-semibold text-[#E8CA7A]">
+                {isStudent ? (
+                  <GraduationCap size={15} />
+                ) : (
+                  <Users size={15} />
+                )}
+                {isStudent ? "STUDENT PORTAL" : "TRAINER PORTAL"}
+              </span>
+
+              <h3 className="mt-6 text-3xl font-extrabold leading-tight">
+                {isStudent
+                  ? "Learn without limits. Grow with confidence."
+                  : "Teach what you know. Inspire what comes next."}
+              </h3>
+
+              <p className="mt-5 text-sm leading-7 text-blue-100/70">
+                {roleDescription}
+              </p>
+
+              <div className="mt-9 space-y-4">
+                {(
+                  isStudent
+                    ? [
+                        "Explore learning opportunities",
+                        "Build practical AI skills",
+                        "Work towards career goals"
+                      ]
+                    : [
+                        "Share knowledge and experience",
+                        "Connect with learners",
+                        "Contribute to future-ready education"
+                      ]
+                ).map((item) => (
+                  <div key={item} className="flex items-center gap-3 text-sm text-blue-50">
+                    <CheckCircle2 size={18} className="shrink-0 text-[#D7B45A]" />
+                    {item}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <p className="relative text-xs text-blue-100/50">
+              © {new Date().getFullYear()} Vyom Academy
+            </p>
+          </div>
+
+          {/* RIGHT FORM PANEL */}
+          <div className="px-6 py-10 sm:px-10 md:px-12 md:py-14">
+
+            <div className="mb-8 flex items-center gap-3 md:hidden">
+              <img
+                src="/vyom-logo.png"
+                alt="Vyom Academy logo"
+                className="h-14 w-14 object-contain"
+              />
+              <div>
+                <h2 className="font-extrabold tracking-wide text-[#102B50]">
+                  VYOM ACADEMY
+                </h2>
+                <p className="text-[9px] font-bold tracking-[2px] text-[#B28A36]">
+                  LEARN • INNOVATE • EXCEL
+                </p>
+              </div>
+            </div>
+
+            <div className="mb-7">
+              <span className="text-xs font-bold tracking-[3px] text-[#B28A36]">
+                {isStudent ? "STUDENT ACCESS" : "TRAINER ACCESS"}
+              </span>
+
+              <h2 className="mt-3 text-3xl font-extrabold text-[#102B50]">
+                {isRegister ? "Create your account" : "Welcome back"}
+              </h2>
+
+              <p className="mt-3 text-sm leading-6 text-slate-500">
+                {isRegister
+                  ? `Create your ${role.toLowerCase()} account to get started with Vyom Academy.`
+                  : `Sign in to continue to the Vyom Academy ${role.toLowerCase()} portal.`}
+              </p>
+            </div>
+
+            {/* MODE SWITCH */}
+            <div className="mb-8 grid grid-cols-2 rounded-xl bg-[#F1F4F9] p-1">
+              <button
+                onClick={() => changeMode("signin")}
+                className={`rounded-lg py-3 text-sm font-semibold transition ${
+                  !isRegister
+                    ? "bg-white text-[#102B50] shadow-sm"
+                    : "text-slate-500 hover:text-[#102B50]"
+                }`}
+              >
+                Sign In
+              </button>
+
+              <button
+                onClick={() => changeMode("register")}
+                className={`rounded-lg py-3 text-sm font-semibold transition ${
+                  isRegister
+                    ? "bg-white text-[#102B50] shadow-sm"
+                    : "text-slate-500 hover:text-[#102B50]"
+                }`}
+              >
+                Create Account
+              </button>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-5">
+
+              {/* FULL NAME */}
+              {isRegister && (
+                <div>
+                  <label className="mb-2 block text-sm font-semibold text-[#102B50]">
+                    Full Name *
+                  </label>
+
+                  <div className="relative">
+                    <UserRound
+                      size={18}
+                      className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+                    />
+                    <input
+                      required
+                      maxLength={100}
+                      autoComplete="name"
+                      value={form.name}
+                      onChange={(e) =>
+                        setForm({ ...form, name: e.target.value })
+                      }
+                      placeholder="Enter your full name"
+                      className="w-full rounded-xl border border-slate-200 py-3.5 pl-11 pr-4 text-sm outline-none transition focus:border-[#B28A36] focus:ring-2 focus:ring-[#D7B45A]/15"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* EMAIL */}
+              <div>
+                <label className="mb-2 block text-sm font-semibold text-[#102B50]">
+                  Email Address *
+                </label>
+
+                <div className="relative">
+                  <Mail
+                    size={18}
+                    className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+                  />
+                  <input
+                    required
+                    type="email"
+                    autoComplete="email"
+                    value={form.email}
+                    onChange={(e) =>
+                      setForm({ ...form, email: e.target.value })
+                    }
+                    placeholder="you@example.com"
+                    className="w-full rounded-xl border border-slate-200 py-3.5 pl-11 pr-4 text-sm outline-none transition focus:border-[#B28A36] focus:ring-2 focus:ring-[#D7B45A]/15"
+                  />
+                </div>
+              </div>
+
+              {/* ROLE-SPECIFIC FIELD */}
+              {isRegister && (
+                <div>
+                  <label className="mb-2 block text-sm font-semibold text-[#102B50]">
+                    {isStudent ? "Course Interest *" : "Area of Expertise *"}
+                  </label>
+
+                  <select
+                    required
+                    value={form.interest}
+                    onChange={(e) =>
+                      setForm({ ...form, interest: e.target.value })
+                    }
+                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3.5 text-sm outline-none transition focus:border-[#B28A36]"
+                  >
+                    <option value="">
+                      {isStudent
+                        ? "Select your course interest"
+                        : "Select your expertise"}
+                    </option>
+                    <option>Artificial Intelligence</option>
+                    <option>Generative AI</option>
+                    <option>Machine Learning</option>
+                    <option>Data Science</option>
+                    <option>Python Programming</option>
+                    <option>Other</option>
+                    {isStudent && <option>Not decided yet</option>}
+                  </select>
+                </div>
+              )}
+
+              {/* PASSWORD */}
+              <div>
+                <div className="mb-2 flex items-center justify-between gap-3">
+                  <label className="block text-sm font-semibold text-[#102B50]">
+                    Password *
+                  </label>
+
+                  {!isRegister && (
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setStatus(
+                          "Password recovery will be available after the authentication service is connected."
+                        )
+                      }
+                      className="text-xs font-semibold text-[#B28A36] hover:underline"
+                    >
+                      Forgot password?
+                    </button>
+                  )}
+                </div>
+
+                <div className="relative">
+                  <LockKeyhole
+                    size={18}
+                    className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+                  />
+
+                  <input
+                    required
+                    type={showPassword ? "text" : "password"}
+                    autoComplete={isRegister ? "new-password" : "current-password"}
+                    minLength={8}
+                    value={form.password}
+                    onChange={(e) =>
+                      setForm({ ...form, password: e.target.value })
+                    }
+                    placeholder="At least 8 characters"
+                    className="w-full rounded-xl border border-slate-200 py-3.5 pl-11 pr-12 text-sm outline-none transition focus:border-[#B28A36] focus:ring-2 focus:ring-[#D7B45A]/15"
+                  />
+
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-[#102B50]"
+                  >
+                    {showPassword ? <EyeOff size={19} /> : <Eye size={19} />}
+                  </button>
+                </div>
+              </div>
+
+              {/* CONFIRM PASSWORD */}
+              {isRegister && (
+                <div>
+                  <label className="mb-2 block text-sm font-semibold text-[#102B50]">
+                    Confirm Password *
+                  </label>
+
+                  <div className="relative">
+                    <LockKeyhole
+                      size={18}
+                      className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+                    />
+
+                    <input
+                      required
+                      type={showConfirmPassword ? "text" : "password"}
+                      autoComplete="new-password"
+                      minLength={8}
+                      value={form.confirmPassword}
+                      onChange={(e) =>
+                        setForm({ ...form, confirmPassword: e.target.value })
+                      }
+                      placeholder="Re-enter your password"
+                      className="w-full rounded-xl border border-slate-200 py-3.5 pl-11 pr-12 text-sm outline-none transition focus:border-[#B28A36] focus:ring-2 focus:ring-[#D7B45A]/15"
+                    />
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setShowConfirmPassword(!showConfirmPassword)
+                      }
+                      aria-label={
+                        showConfirmPassword
+                          ? "Hide confirm password"
+                          : "Show confirm password"
+                      }
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-[#102B50]"
+                    >
+                      {showConfirmPassword
+                        ? <EyeOff size={19} />
+                        : <Eye size={19} />}
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* TERMS */}
+              {isRegister && (
+                <label className="flex cursor-pointer items-start gap-3 rounded-xl bg-[#F4F7FC] p-4">
+                  <input
+                    type="checkbox"
+                    required
+                    checked={form.terms}
+                    onChange={(e) =>
+                      setForm({ ...form, terms: e.target.checked })
+                    }
+                    className="mt-1 h-4 w-4 accent-[#102B50]"
+                  />
+
+                  <span className="text-xs leading-6 text-slate-600">
+                    I agree to the Terms of Service and Privacy Policy.
+                  </span>
+                </label>
+              )}
+
+              {/* STATUS MESSAGE */}
+              {status && (
+                <div
+                  role="status"
+                  aria-live="polite"
+                  className="rounded-xl border border-[#E8D6A5] bg-[#FFF9E9] p-4 text-xs leading-6 text-amber-900"
+                >
+                  {status}
+                </div>
+              )}
+
+              {/* SUBMIT */}
+              <button
+                type="submit"
+                className="flex w-full items-center justify-center gap-3 rounded-xl bg-[#102B50] px-6 py-4 font-bold text-white shadow-lg shadow-blue-950/10 transition hover:bg-[#1C416E]"
+              >
+                {isRegister ? "Create Account" : "Sign In"}
+                <ArrowRight size={18} />
+              </button>
+            </form>
+
+            <p className="mt-7 text-center text-sm text-slate-500">
+              {isRegister
+                ? "Already have an account?"
+                : "New to Vyom Academy?"}
+
+              <button
+                onClick={() => changeMode(isRegister ? "signin" : "register")}
+                className="ml-2 font-bold text-[#B28A36] hover:underline"
+              >
+                {isRegister ? "Sign In" : "Create Account"}
+              </button>
+            </p>
+
+            <div className="mt-7 flex items-start gap-2 border-t border-slate-100 pt-5 text-xs leading-6 text-slate-400">
+              <ShieldCheck size={17} className="mt-0.5 shrink-0" />
+
+              <p>
+                Demo interface only. No password or account details are
+                transmitted, stored or authenticated by a backend yet.
+              </p>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+/* ==================================================
+   MAIN WEBSITE
+================================================== */
+
+function App() {
+  const [mobileMenu, setMobileMenu] = useState(false);
+  const [activeLogin, setActiveLogin] = useState("");
+
+  return (
+    <div className="min-h-screen overflow-x-hidden bg-white text-slate-900">
+
+      {/* NAVIGATION */}
+      <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur-xl">
+        <nav className="mx-auto flex max-w-7xl items-center justify-between px-5 py-3 md:px-8">
+
+          <a
+            href="#home"
+            onClick={() => setMobileMenu(false)}
+            className="flex items-center gap-3"
+          >
+            <img
+              src="/vyom-logo.png"
+              alt="Vyom Academy logo"
+              className="h-14 w-14 object-contain"
+            />
+
+            <div>
+              <h1 className="text-lg font-extrabold tracking-wide text-[#102B50] sm:text-xl">
+                VYOM ACADEMY
+              </h1>
+
+              <p className="text-[9px] font-bold tracking-[2.5px] text-[#B28A36]">
+                LEARN • INNOVATE • EXCEL
+              </p>
+            </div>
+          </a>
+
+          <div className="hidden items-center gap-7 lg:flex">
+            {navItems.map(([label, link]) => (
+              <a
+                key={label}
+                href={link}
+                className="text-sm font-medium text-slate-600 transition hover:text-[#B28A36]"
+              >
+                {label}
+              </a>
+            ))}
+          </div>
+
+          <div className="hidden items-center gap-3 md:flex">
+            <button
+              onClick={() => setActiveLogin("Trainer")}
+              className="rounded-lg px-4 py-3 text-sm font-semibold text-[#102B50] transition hover:bg-slate-100"
+            >
+              Trainer Login
+            </button>
+
+            <button
+              onClick={() => setActiveLogin("Student")}
+              className="rounded-lg bg-[#102B50] px-5 py-3 text-sm font-semibold text-white shadow-lg transition hover:bg-[#1C416E]"
+            >
+              Student Login
+            </button>
+          </div>
+
+          <button
+            onClick={() => setMobileMenu(!mobileMenu)}
+            className="rounded-lg border border-slate-200 p-2 text-[#102B50] md:hidden"
+            aria-label="Toggle navigation"
+          >
+            {mobileMenu ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </nav>
+
+        <AnimatePresence>
+          {mobileMenu && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              className="overflow-hidden border-t border-slate-200 bg-white md:hidden"
+            >
+              <div className="flex flex-col gap-1 px-6 py-5">
+                {navItems.map(([label, link]) => (
+                  <a
+                    key={label}
+                    href={link}
+                    onClick={() => setMobileMenu(false)}
+                    className="rounded-lg px-3 py-3 font-medium text-slate-700 hover:bg-slate-100"
+                  >
+                    {label}
+                  </a>
+                ))}
+
+                <button
+                  onClick={() => {
+                    setMobileMenu(false);
+                    setActiveLogin("Trainer");
+                  }}
+                  className="mt-3 rounded-lg border border-[#102B50] px-4 py-3 font-semibold text-[#102B50]"
+                >
+                  Trainer Login
+                </button>
+
+                <button
+                  onClick={() => {
+                    setMobileMenu(false);
+                    setActiveLogin("Student");
+                  }}
+                  className="rounded-lg bg-[#102B50] px-4 py-3 font-semibold text-white"
+                >
+                  Student Login
+                </button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </header>
+
+      {/* HERO */}
+      <section
+        id="home"
+        className="relative isolate overflow-hidden bg-[#0B1F3A] text-white"
+      >
+        <div className="pointer-events-none absolute -right-48 -top-48 -z-10 h-[600px] w-[600px] rounded-full border border-white/10" />
+        <div className="pointer-events-none absolute -right-20 -top-20 -z-10 h-[380px] w-[380px] rounded-full border border-[#D7B45A]/20" />
+        <div className="pointer-events-none absolute bottom-0 left-0 -z-10 h-80 w-80 rounded-full bg-blue-500/10 blur-[100px]" />
+
+        <div className="mx-auto grid max-w-7xl items-center gap-14 px-6 py-20 md:grid-cols-2 md:px-8 md:py-28">
+
+          <motion.div
+            initial={{ opacity: 0, y: 35 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-[#D7B45A]/30 bg-[#D7B45A]/10 px-4 py-2 text-xs font-semibold tracking-wider text-[#E8CA7A]">
+              <Sparkles size={15} />
+              EDUCATION FOR THE FUTURE
+            </div>
+
+            <h2 className="text-5xl font-extrabold leading-[1.12] tracking-tight sm:text-6xl lg:text-[4.25rem]">
+              Learn Today.
+              <span className="mt-2 block whitespace-normal text-[clamp(2.5rem,5.2vw,4.25rem)] text-[#D7B45A] sm:whitespace-nowrap">
+                Lead Tomorrow.
+              </span>
+            </h2>
+
+            <p className="mt-7 max-w-xl text-base leading-8 text-blue-100/75 md:text-lg">
+              Discover the power of Artificial Intelligence.
+              Develop industry-relevant skills, learn from experts,
+              and prepare yourself for the opportunities of tomorrow.
+            </p>
+
+            <div className="mt-9 flex flex-wrap gap-4">
+              <a
+                href="#programs"
+                className="inline-flex items-center gap-3 rounded-lg bg-[#D7B45A] px-7 py-4 font-bold text-[#102B50] hover:bg-[#E9CD83]"
+              >
+                Explore Programs
+                <ArrowRight size={19} />
+              </a>
+
+              <a
+                href="#jobs"
+                className="rounded-lg border border-white/30 px-7 py-4 font-semibold text-white hover:bg-white/10"
+              >
+                Explore Careers
+              </a>
+            </div>
+
+            <div className="mt-12 border-l-2 border-[#D7B45A] pl-5">
+              <p className="max-w-lg text-sm italic leading-7 text-blue-100/75">
+                "The future belongs to those who learn, adapt, and build with intelligence."
+              </p>
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1 }}
+            className="relative mx-auto w-full max-w-md"
+          >
+            <div className="absolute inset-0 rounded-full bg-[#D7B45A]/10 blur-[90px]" />
+
+            <div className="relative overflow-hidden rounded-3xl border border-[#D7B45A]/30 bg-white px-5 py-5 shadow-2xl sm:px-8 sm:py-7">
+              <img
+                src="/vyom-logo.png"
+                alt="Vyom Academy original logo"
+                className="h-72 w-full scale-110 object-contain md:h-[390px]"
+              />
+
+              <div className="mt-3 border-t border-slate-200 pt-5 text-center">
+                <h3 className="text-2xl font-extrabold tracking-wide text-[#102B50]">
+                  VYOM ACADEMY
+                </h3>
+
+                <p className="mt-2 text-xs font-bold tracking-[3px] text-[#B28A36]">
+                  LEARN • INNOVATE • EXCEL
+                </p>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* AUDIENCE STRIP */}
+      <section className="border-b border-slate-100 bg-white px-6 py-8">
+        <div className="mx-auto grid max-w-6xl gap-7 text-center sm:grid-cols-3">
+          {[
+            { icon: GraduationCap, title: "For Students" },
+            { icon: BriefcaseBusiness, title: "For Professionals" },
+            { icon: Users, title: "For Trainers" }
+          ].map((item) => {
+            const Icon = item.icon;
+
+            return (
+              <div
+                key={item.title}
+                className="flex items-center justify-center gap-3"
+              >
+                <Icon className="text-[#B28A36]" size={24} />
+                <span className="font-semibold text-[#102B50]">
+                  {item.title}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* INTRODUCTION */}
+      <section className="px-6 py-24">
+        <div className="mx-auto max-w-3xl text-center">
+          <span className="text-xs font-bold tracking-[3px] text-[#B28A36]">
+            WELCOME TO VYOM
+          </span>
+
+          <h2 className="mt-4 text-3xl font-extrabold leading-tight text-[#102B50] md:text-5xl">
+            Education Beyond Boundaries
+          </h2>
+
+          <p className="mt-6 leading-8 text-slate-500">
+            We envision a learning environment where students,
+            working professionals and curious minds can explore
+            emerging technologies and develop skills for a changing world.
+          </p>
+        </div>
+      </section>
+
+      {/* PROGRAMS */}
+      <section id="programs" className="bg-[#F4F7FC] px-6 py-24">
+        <div className="mx-auto max-w-7xl">
+          <div className="mb-12 flex flex-wrap items-end justify-between gap-5">
+            <div>
+              <span className="text-xs font-bold tracking-[3px] text-[#B28A36]">
+                WHAT YOU CAN LEARN
+              </span>
+
+              <h2 className="mt-3 text-3xl font-extrabold text-[#102B50] md:text-4xl">
+                Explore Learning Pathways
+              </h2>
+            </div>
+
+            <a
+              href="#programs"
+              className="flex items-center gap-2 font-semibold text-[#102B50]"
+            >
+              Explore all <ArrowRight size={17} />
+            </a>
+          </div>
+
+          <div className="grid gap-7 md:grid-cols-3">
+            {programs.map((program, index) => {
+              const Icon = program.icon;
+
+              return (
+                <motion.div
+                  key={program.title}
+                  initial={{ opacity: 0, y: 25 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.12 }}
+                  whileHover={{ y: -7 }}
+                  className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm transition hover:shadow-xl"
+                >
+                  <div className="mb-7 flex h-14 w-14 items-center justify-center rounded-xl bg-[#102B50] text-[#D7B45A]">
+                    <Icon size={28} />
+                  </div>
+
+                  <h3 className="text-xl font-bold text-[#102B50]">
+                    {program.title}
+                  </h3>
+
+                  <p className="mt-4 min-h-20 text-sm leading-7 text-slate-500">
+                    {program.description}
+                  </p>
+
+                  <a
+                    href="#about"
+                    className="mt-7 inline-flex items-center gap-2 text-sm font-bold text-[#B28A36]"
+                  >
+                    Learn More <ChevronRight size={17} />
+                  </a>
+                </motion.div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* JOB BOARD */}
+      <JobBoard />
+
+      {/* ABOUT */}
+      <section id="about" className="bg-[#102B50] px-6 py-24 text-white">
+        <div className="mx-auto grid max-w-7xl gap-12 md:grid-cols-2">
+          <div>
+            <span className="text-xs font-bold tracking-[3px] text-[#D7B45A]">
+              ABOUT VYOM ACADEMY
+            </span>
+
+            <h2 className="mt-5 text-4xl font-extrabold leading-tight md:text-5xl">
+              Empowering Minds for an Intelligent Future.
+            </h2>
+          </div>
+
+          <div>
+            <p className="leading-8 text-blue-100/70">
+              Vyom Academy aims to bridge the gap between education
+              and emerging technology. Our vision is to make modern
+              technology learning accessible to students, professionals
+              and lifelong learners.
+            </p>
+
+            <div className="mt-8 space-y-5">
+              {[
+                "Practical and technology-focused learning",
+                "Opportunities for continuous skill development",
+                "A learning community for curious minds"
+              ].map((item) => (
+                <div key={item} className="flex items-center gap-3">
+                  <CheckCircle2
+                    className="shrink-0 text-[#D7B45A]"
+                    size={20}
+                  />
+                  <span className="text-sm text-blue-50">{item}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FEEDBACK */}
+      <FeedbackSection />
+
+      {/* CALL TO ACTION */}
+      <section className="px-6 py-20">
+        <div className="mx-auto max-w-6xl overflow-hidden rounded-3xl bg-[#102B50] px-7 py-14 text-center text-white md:px-16">
+          <Target className="mx-auto mb-5 text-[#D7B45A]" size={38} />
+
+          <h2 className="text-3xl font-extrabold md:text-4xl">
+            Your Future Starts with Learning.
+          </h2>
+
+          <p className="mx-auto mt-5 max-w-xl leading-7 text-blue-100/70">
+            Take the first step towards understanding the technology
+            that is shaping tomorrow.
+          </p>
+
+          <a
+            href="#programs"
+            className="mt-8 inline-flex items-center gap-3 rounded-lg bg-[#D7B45A] px-7 py-4 font-bold text-[#102B50] hover:bg-[#E9CD83]"
+          >
+            Start Exploring
+            <ArrowRight size={18} />
+          </a>
+        </div>
+      </section>
+
+      {/* FOOTER */}
+      <footer className="bg-[#09182D] px-6 py-12 text-white">
+        <div className="mx-auto max-w-7xl">
+          <div className="flex flex-col justify-between gap-8 md:flex-row">
+            <div>
+              <h2 className="text-2xl font-extrabold tracking-wide">
+                VYOM ACADEMY
+              </h2>
+
+              <p className="mt-3 text-sm text-blue-100/50">
+                Learn. Innovate. Excel.
+              </p>
+            </div>
+
+            <div className="flex flex-wrap gap-6 text-sm text-blue-100/70">
+              {navItems.map(([label, link]) => (
+                <a
+                  key={label}
+                  href={link}
+                  className="transition hover:text-[#D7B45A]"
+                >
+                  {label}
+                </a>
+              ))}
+            </div>
+          </div>
+
+          <div className="mt-10 border-t border-white/10 pt-6 text-center text-xs text-blue-100/40">
+            © {new Date().getFullYear()} Vyom Academy. All rights reserved.
+          </div>
+        </div>
+      </footer>
+
+      {/* STUDENT / TRAINER AUTHENTICATION */}
+      <AnimatePresence>
+        {activeLogin && (
+          <AuthModal
+            key={activeLogin}
+            role={activeLogin}
+            onClose={() => setActiveLogin("")}
+          />
+        )}
+      </AnimatePresence>
+
+    </div>
+  );
+}
+
+export default App;
