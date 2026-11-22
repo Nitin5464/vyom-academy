@@ -30,10 +30,11 @@ import {
   LockKeyhole,
   Eye,
   EyeOff,
-  UserRound,
-  BookOpen,
-  Award
+  UserRound
 } from "lucide-react";
+
+// Automatically handles both localhost and GitHub Pages.
+const logoSrc = `${import.meta.env.BASE_URL}vyom-logo.png`;
 
 /* ==================================================
    WEBSITE DATA
@@ -146,7 +147,7 @@ function JobBoard() {
           </button>
         </div>
 
-        {/* SEARCH */}
+        {/* SEARCH AND FILTERS */}
         <div className="mt-12 rounded-2xl border border-slate-200 bg-[#F4F7FC] p-5 md:p-7">
           <div className="mb-5 flex items-center gap-2 font-bold text-[#102B50]">
             <Filter size={19} className="text-[#B28A36]" />
@@ -211,7 +212,7 @@ function JobBoard() {
           </div>
         </div>
 
-        {/* LISTINGS */}
+        {/* JOB LISTINGS */}
         <div className="mt-10 flex items-center justify-between">
           <h3 className="text-xl font-bold text-[#102B50]">
             Available Opportunities
@@ -318,7 +319,7 @@ function JobBoard() {
         )}
       </div>
 
-      {/* JOB FORM */}
+      {/* POST JOB MODAL */}
       <AnimatePresence>
         {postOpen && (
           <motion.div
@@ -691,6 +692,7 @@ function FeedbackSection() {
                 <h3 className="text-xl font-bold text-[#102B50]">
                   Learner Feedback
                 </h3>
+
                 <p className="mt-1 text-sm text-slate-500">
                   Experiences submitted by learners
                 </p>
@@ -732,6 +734,7 @@ function FeedbackSection() {
                           <h4 className="font-bold text-[#102B50]">
                             {review.name}
                           </h4>
+
                           <p className="mt-1 text-xs text-slate-500">
                             {review.course}
                           </p>
@@ -776,9 +779,10 @@ function FeedbackSection() {
                 className="mt-0.5 shrink-0 text-[#B28A36]"
                 size={20}
               />
+
               <p className="text-xs leading-6 text-slate-600">
-                Submissions require review before they can be approved as
-                public testimonials. Ratings shown here are individual
+                Submissions require review before they can be approved
+                as public testimonials. Ratings shown here are individual
                 submissions, not an overall academy rating.
               </p>
             </div>
@@ -875,7 +879,7 @@ function AuthModal({ role, onClose }) {
 
             <div className="relative">
               <img
-                src="/vyom-logo.png"
+                src={logoSrc}
                 alt="Vyom Academy logo"
                 className="h-24 w-24 rounded-2xl bg-white p-2 object-contain"
               />
@@ -910,21 +914,26 @@ function AuthModal({ role, onClose }) {
               </p>
 
               <div className="mt-9 space-y-4">
-                {(
-                  isStudent
-                    ? [
-                        "Explore learning opportunities",
-                        "Build practical AI skills",
-                        "Work towards career goals"
-                      ]
-                    : [
-                        "Share knowledge and experience",
-                        "Connect with learners",
-                        "Contribute to future-ready education"
-                      ]
+                {(isStudent
+                  ? [
+                      "Explore learning opportunities",
+                      "Build practical AI skills",
+                      "Work towards career goals"
+                    ]
+                  : [
+                      "Share knowledge and experience",
+                      "Connect with learners",
+                      "Contribute to future-ready education"
+                    ]
                 ).map((item) => (
-                  <div key={item} className="flex items-center gap-3 text-sm text-blue-50">
-                    <CheckCircle2 size={18} className="shrink-0 text-[#D7B45A]" />
+                  <div
+                    key={item}
+                    className="flex items-center gap-3 text-sm text-blue-50"
+                  >
+                    <CheckCircle2
+                      size={18}
+                      className="shrink-0 text-[#D7B45A]"
+                    />
                     {item}
                   </div>
                 ))}
@@ -941,10 +950,11 @@ function AuthModal({ role, onClose }) {
 
             <div className="mb-8 flex items-center gap-3 md:hidden">
               <img
-                src="/vyom-logo.png"
+                src={logoSrc}
                 alt="Vyom Academy logo"
                 className="h-14 w-14 object-contain"
               />
+
               <div>
                 <h2 className="font-extrabold tracking-wide text-[#102B50]">
                   VYOM ACADEMY
@@ -1010,6 +1020,7 @@ function AuthModal({ role, onClose }) {
                       size={18}
                       className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
                     />
+
                     <input
                       required
                       maxLength={100}
@@ -1036,6 +1047,7 @@ function AuthModal({ role, onClose }) {
                     size={18}
                     className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
                   />
+
                   <input
                     required
                     type="email"
@@ -1050,7 +1062,7 @@ function AuthModal({ role, onClose }) {
                 </div>
               </div>
 
-              {/* ROLE-SPECIFIC FIELD */}
+              {/* COURSE OR EXPERTISE */}
               {isRegister && (
                 <div>
                   <label className="mb-2 block text-sm font-semibold text-[#102B50]">
@@ -1112,7 +1124,9 @@ function AuthModal({ role, onClose }) {
                   <input
                     required
                     type={showPassword ? "text" : "password"}
-                    autoComplete={isRegister ? "new-password" : "current-password"}
+                    autoComplete={
+                      isRegister ? "new-password" : "current-password"
+                    }
                     minLength={8}
                     value={form.password}
                     onChange={(e) =>
@@ -1153,7 +1167,10 @@ function AuthModal({ role, onClose }) {
                       minLength={8}
                       value={form.confirmPassword}
                       onChange={(e) =>
-                        setForm({ ...form, confirmPassword: e.target.value })
+                        setForm({
+                          ...form,
+                          confirmPassword: e.target.value
+                        })
                       }
                       placeholder="Re-enter your password"
                       className="w-full rounded-xl border border-slate-200 py-3.5 pl-11 pr-12 text-sm outline-none transition focus:border-[#B28A36] focus:ring-2 focus:ring-[#D7B45A]/15"
@@ -1198,7 +1215,7 @@ function AuthModal({ role, onClose }) {
                 </label>
               )}
 
-              {/* STATUS MESSAGE */}
+              {/* STATUS */}
               {status && (
                 <div
                   role="status"
@@ -1268,7 +1285,7 @@ function App() {
             className="flex items-center gap-3"
           >
             <img
-              src="/vyom-logo.png"
+              src={logoSrc}
               alt="Vyom Academy logo"
               className="h-14 w-14 object-contain"
             />
@@ -1321,6 +1338,7 @@ function App() {
           </button>
         </nav>
 
+        {/* MOBILE NAVIGATION */}
         <AnimatePresence>
           {mobileMenu && (
             <motion.div
@@ -1424,6 +1442,7 @@ function App() {
             </div>
           </motion.div>
 
+          {/* ORIGINAL LOGO */}
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -1434,7 +1453,7 @@ function App() {
 
             <div className="relative overflow-hidden rounded-3xl border border-[#D7B45A]/30 bg-white px-5 py-5 shadow-2xl sm:px-8 sm:py-7">
               <img
-                src="/vyom-logo.png"
+                src={logoSrc}
                 alt="Vyom Academy original logo"
                 className="h-72 w-full scale-110 object-contain md:h-[390px]"
               />
@@ -1453,7 +1472,7 @@ function App() {
         </div>
       </section>
 
-      {/* AUDIENCE STRIP */}
+      {/* AUDIENCE */}
       <section className="border-b border-slate-100 bg-white px-6 py-8">
         <div className="mx-auto grid max-w-6xl gap-7 text-center sm:grid-cols-3">
           {[
@@ -1500,6 +1519,7 @@ function App() {
       {/* PROGRAMS */}
       <section id="programs" className="bg-[#F4F7FC] px-6 py-24">
         <div className="mx-auto max-w-7xl">
+
           <div className="mb-12 flex flex-wrap items-end justify-between gap-5">
             <div>
               <span className="text-xs font-bold tracking-[3px] text-[#B28A36]">
@@ -1549,7 +1569,8 @@ function App() {
                     href="#about"
                     className="mt-7 inline-flex items-center gap-2 text-sm font-bold text-[#B28A36]"
                   >
-                    Learn More <ChevronRight size={17} />
+                    Learn More
+                    <ChevronRight size={17} />
                   </a>
                 </motion.div>
               );
@@ -1631,6 +1652,7 @@ function App() {
       {/* FOOTER */}
       <footer className="bg-[#09182D] px-6 py-12 text-white">
         <div className="mx-auto max-w-7xl">
+
           <div className="flex flex-col justify-between gap-8 md:flex-row">
             <div>
               <h2 className="text-2xl font-extrabold tracking-wide">
@@ -1671,7 +1693,6 @@ function App() {
           />
         )}
       </AnimatePresence>
-
     </div>
   );
 }
